@@ -11,14 +11,14 @@ This repository contains four main components:
 
 ## Injector
 
-* Uses [gateling.io](http://gatling.io) to inject data from a file datasource into Apache Kafka, in order to be processed by the applications.
+* Uses [gateling.io](http://gatling.io) to inject data from a file datasource into [Apache Kafka](https://kafka.apache.org), in order to be processed by the applications.
 * The injection rate per application can be configured to change over time.
 * Simulates applications being deployed and canceled in Apache Flink.
 
 ## Reporter
 
 * Collects logs from the machines available in your performance environment.
-* Launches Apache Zeppelin using Docker and allows you to analyse all the information gathered during the execution.
+* Launches [Apache Zeppelin](http://zeppelin.apache.org) using [Docker](https://www.docker.com) and allows you to analyse all the information gathered during the execution.
 
 ## runtest.sh
 

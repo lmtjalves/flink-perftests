@@ -4,7 +4,7 @@ A set of tools to do performance tests on Apache Flink (with multiple applicatio
 
 This repository contains four main components:
 
-## Ingnitor
+## Ignitor
 
 * Starts/Stops all the machines/services in your performance environment.
 * Clean up the state of the environment (logs from old executions).

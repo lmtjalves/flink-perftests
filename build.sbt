@@ -24,7 +24,15 @@ lazy val ignitor = project
   .enablePlugins(JavaAppPackaging)
 
 lazy val ignitorSettings = Seq(
-  mainClass in assembly := Some("example.Hello"),
+  mainClass in assembly := Some("ignitor.Ignitor"),
+
+  mappings in Universal ++= {
+    ((resourceDirectory in Compile).value * "*").get.map { f =>
+      f -> s"conf/${f.name}"
+    }
+  },
+
+  bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/ignitor.conf"""",
 
   libraryDependencies ++= Seq(
     Dependencies.ssh,
@@ -41,12 +49,20 @@ lazy val injector = project
   .enablePlugins(JavaAppPackaging)
 
 lazy val injectorSettings = Seq(
-  mainClass in assembly := Some("example.Hello"),
+  mainClass in assembly := Some("injector.Injector"),
 
   assemblyMergeStrategy in assembly := {
     case PathList("META-INF", "io.netty.versions.properties") => MergeStrategy.first
     case resource => (assemblyMergeStrategy in assembly).value(resource)
   },
+
+  mappings in Universal ++= {
+    ((resourceDirectory in Compile).value * "*").get.map { f =>
+      f -> s"conf/${f.name}"
+    }
+  },
+
+  bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/injector.conf"""",
 
   libraryDependencies ++= Seq(
     Dependencies.gatling,
@@ -63,7 +79,15 @@ lazy val reporter = project
   .enablePlugins(JavaAppPackaging)
 
 lazy val reporterSettings = Seq(
-  mainClass in assembly := Some("example.Hello"),
+  mainClass in assembly := Some("reporter.Reporter"),
+
+  mappings in Universal ++= {
+    ((resourceDirectory in Compile).value * "*").get.map { f =>
+      f -> s"conf/${f.name}"
+    }
+  },
+
+  bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/reporter.conf"""",
 
   libraryDependencies ++= Seq(
     Dependencies.ssh,
@@ -100,8 +124,6 @@ distFlinkPerfTests := {
       // Remove the unziped files
       IO.delete((tmpFile / a.getName.replace(".zip", "")))
     }
-
-
 
     IO.zip(
       Path.allSubpaths(tmpFile).map { case (file, path) => file -> s"${name}/${path}" },

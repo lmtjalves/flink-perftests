@@ -1,37 +1,115 @@
-import Dependencies._
+import sbtassembly.AssemblyPlugin.autoImport.assemblyMergeStrategy
+import com.typesafe.sbt.packager.universal.Archives._
 
-name := "flink-perf-tests"
 
-// used like the groupId in maven
-organization in ThisBuild := "org.lalves"
+lazy val commonSettings = Seq(
+  organization := "org.lalves",
+  version      := "0.1.0-SNAPSHOT",
+  scalaVersion := "2.11.8",
 
-// all sub projects have the same version
-version in ThisBuild := "0.1.0-SNAPSHOT"
+  // Don't run tests during assembly
+  test in assembly := {}
+)
 
-scalaVersion in ThisBuild := "2.11.8"
+// --------- Project sh (scripts) ------------------
+
+lazy val sh = project
+  .settings(commonSettings)
+  .enablePlugins(JavaAppPackaging)
+
+// --------- Project Ignitor ------------------
 
 lazy val ignitor = project
-  .settings(libraryDependencies ++= Seq(
-    ssh,
-    typesafeConfig,
+  .settings(commonSettings ++ ignitorSettings)
+  .enablePlugins(JavaAppPackaging)
 
-    scalaTest
-  ))
+lazy val ignitorSettings = Seq(
+  mainClass in assembly := Some("example.Hello"),
+
+  libraryDependencies ++= Seq(
+    Dependencies.ssh,
+    Dependencies.typesafeConfig,
+    Dependencies.scalaTest % Test
+  )
+)
+
+// --------- Project Injector -----------------
 
 lazy val injector = project
-  .settings(libraryDependencies ++= Seq(
-    gatling,
-    gatlingHighCharts,
-    typesafeConfig,
+  .settings(commonSettings ++ injectorSettings)
+  .enablePlugins(GatlingPlugin)
+  .enablePlugins(JavaAppPackaging)
 
-    scalaTest
-  ))
+lazy val injectorSettings = Seq(
+  mainClass in assembly := Some("example.Hello"),
+
+  assemblyMergeStrategy in assembly := {
+    case PathList("META-INF", "io.netty.versions.properties") => MergeStrategy.first
+    case resource => (assemblyMergeStrategy in assembly).value(resource)
+  },
+
+  libraryDependencies ++= Seq(
+    Dependencies.gatling,
+    Dependencies.gatlingHighCharts,
+    Dependencies.typesafeConfig,
+    Dependencies.scalaTest % Test
+  )
+)
+
+// --------- Project Reporter -----------------
 
 lazy val reporter = project
-  .settings(libraryDependencies ++= Seq(
-    ssh,
-    docker,
-    typesafeConfig,
+  .settings(commonSettings ++ reporterSettings)
+  .enablePlugins(JavaAppPackaging)
 
-    scalaTest
-  ))
+lazy val reporterSettings = Seq(
+  mainClass in assembly := Some("example.Hello"),
+
+  libraryDependencies ++= Seq(
+    Dependencies.ssh,
+    Dependencies.docker,
+    Dependencies.typesafeConfig,
+    Dependencies.scalaTest % Test
+  )
+)
+
+lazy val distFlinkPerfTests = taskKey[File]("Creates a distributable zip file")
+distFlinkPerfTests := {
+  val name    = "flink-perftests"
+  val distZip = target.value / (name + ".zip")
+
+  // Cleanup target
+  IO.delete(distZip)
+
+  val ignitorZip  = (packageBin in Universal in ignitor).value
+  val injectorZip = (packageBin in Universal in injector).value
+  val reporterZip = (packageBin in Universal in reporter).value
+  val shZip       = (packageBin in Universal in sh).value
+
+  IO.withTemporaryDirectory { tmpFile =>
+    // Unzip all the artifacts into the distribution folder
+    Seq(ignitorZip, injectorZip, reporterZip, shZip).map { a =>
+      val files = IO.unzip(a, tmpFile)
+      files.foreach { f =>
+        // Move all files from the unziped folder
+        val relativePath = tmpFile.toPath.relativize(f.toPath)
+        val toFile = new File(tmpFile.toString, relativePath.subpath(1, relativePath.getNameCount).toString)
+        IO.move(f, toFile)
+      }
+
+      // Remove the unziped files
+      IO.delete((tmpFile / a.getName.replace(".zip", "")))
+    }
+
+
+
+    IO.zip(
+      Path.allSubpaths(tmpFile).map { case (file, path) => file -> s"${name}/${path}" },
+      distZip
+    )
+  }
+
+  distZip
+}
+
+

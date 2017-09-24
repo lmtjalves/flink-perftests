@@ -17,36 +17,13 @@ lazy val sh = project
   .settings(commonSettings)
   .enablePlugins(JavaAppPackaging)
 
-// --------- Project Ignitor ------------------
-
-lazy val ignitor = project
-  .settings(commonSettings ++ ignitorSettings)
-  .enablePlugins(JavaAppPackaging)
-
-lazy val ignitorSettings = Seq(
-  mainClass in assembly := Some("ignitor.Ignitor"),
-
-  mappings in Universal ++= {
-    ((resourceDirectory in Compile).value * "*").get.map { f =>
-      f -> s"conf/${f.name}"
-    }
-  },
-
-  bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/ignitor.conf"""",
-
-  libraryDependencies ++= Seq(
-    Dependencies.ssh,
-    Dependencies.typesafeConfig,
-    Dependencies.scalaTest % Test
-  )
-)
-
 // --------- Project Injector -----------------
 
 lazy val injector = project
   .settings(commonSettings ++ injectorSettings)
   .enablePlugins(GatlingPlugin)
   .enablePlugins(JavaAppPackaging)
+  .dependsOn(Dependencies.Projects.gatlingKafka)
 
 lazy val injectorSettings = Seq(
   mainClass in assembly := Some("injector.Injector"),
@@ -57,8 +34,13 @@ lazy val injectorSettings = Seq(
   },
 
   mappings in Universal ++= {
-    ((resourceDirectory in Compile).value * "*").get.map { f =>
+    ((resourceDirectory in Test).value * "*").get.map { f =>
       f -> s"conf/${f.name}"
+    }
+  },
+  mappings in Universal ++= {
+    ((packageBin in Test).value).get.map { f =>
+      f -> s"lib/${f.name}"
     }
   },
 
@@ -68,6 +50,7 @@ lazy val injectorSettings = Seq(
     Dependencies.gatling,
     Dependencies.gatlingHighCharts,
     Dependencies.typesafeConfig,
+    Dependencies.kafka,
     Dependencies.scalaTest % Test
   )
 )
@@ -105,28 +88,27 @@ distFlinkPerfTests := {
   // Cleanup target
   IO.delete(distZip)
 
-  val ignitorZip  = (packageBin in Universal in ignitor).value
   val injectorZip = (packageBin in Universal in injector).value
   val reporterZip = (packageBin in Universal in reporter).value
   val shZip       = (packageBin in Universal in sh).value
 
-  IO.withTemporaryDirectory { tmpFile =>
+  IO.withTemporaryDirectory { tmpFolder =>
     // Unzip all the artifacts into the distribution folder
-    Seq(ignitorZip, injectorZip, reporterZip, shZip).map { a =>
-      val files = IO.unzip(a, tmpFile)
+    Seq(injectorZip, reporterZip, shZip).map { a =>
+      val files = IO.unzip(a, tmpFolder)
       files.foreach { f =>
         // Move all files from the unziped folder
-        val relativePath = tmpFile.toPath.relativize(f.toPath)
-        val toFile = new File(tmpFile.toString, relativePath.subpath(1, relativePath.getNameCount).toString)
+        val relativePath = tmpFolder.toPath.relativize(f.toPath)
+        val toFile = new File(tmpFolder.toString, relativePath.subpath(1, relativePath.getNameCount).toString)
         IO.move(f, toFile)
       }
 
       // Remove the unziped files
-      IO.delete((tmpFile / a.getName.replace(".zip", "")))
+      IO.delete((tmpFolder / a.getName.replace(".zip", "")))
     }
 
     IO.zip(
-      Path.allSubpaths(tmpFile).map { case (file, path) => file -> s"${name}/${path}" },
+      Path.allSubpaths(tmpFolder).map { case (file, path) => file -> s"${name}/${path}" },
       distZip
     )
   }

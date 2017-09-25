@@ -4,11 +4,6 @@ A set of tools to do performance tests on Apache Flink (with multiple applicatio
 
 This repository contains four main components:
 
-## Ignitor
-
-* Starts/Stops all the machines/services in your performance environment.
-* Clean up the state of the environment (logs from old executions).
-
 ## Injector
 
 * Uses [gateling.io](http://gatling.io) to inject data from a file datasource into [Apache Kafka](https://kafka.apache.org), in order to be processed by the applications.
@@ -17,6 +12,8 @@ This repository contains four main components:
 
 ## Reporter
 
+* Starts/Stops all the machines/services in your performance environment.
+* Clean up the state of the environment (logs from old executions).
 * Collects logs from the machines available in your performance environment.
 * Launches [Apache Zeppelin](http://zeppelin.apache.org) using [Docker](https://www.docker.com) and allows you to analyse all the information gathered during the execution.
 

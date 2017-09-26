@@ -1,5 +1,7 @@
 package reporter.description
 
+import com.decodified.scalassh.SSH
+
 /**
  * A machine in the performance tests environment.
  *
@@ -9,32 +11,4 @@ package reporter.description
 case class Machine(
   hostname: String,
   services: Seq[Service]
-) {
-  /**
-   * Starts the services.
-   */
-  def start(): Unit = {
-
-  }
-
-  /**
-   * Stops the services.
-   */
-  def stop(): Unit = {
-
-  }
-
-  /**
-   * Fetches the logs from the services.
-   */
-  def fetchLogs(): Unit = {
-
-  }
-
-  /**
-   * Deletes the logs in the services.
-   */
-  def deleteLogs(): Unit = {
-
-  }
-}
+)

@@ -50,8 +50,7 @@ lazy val injectorSettings = Seq(
     Dependencies.gatling,
     Dependencies.gatlingHighCharts,
     Dependencies.typesafeConfig,
-    Dependencies.kafka,
-    Dependencies.scalaTest % Test
+    Dependencies.kafka
   )
 )
 
@@ -74,9 +73,7 @@ lazy val reporterSettings = Seq(
 
   libraryDependencies ++= Seq(
     Dependencies.ssh,
-    Dependencies.docker,
-    Dependencies.typesafeConfig,
-    Dependencies.scalaTest % Test
+    Dependencies.typesafeConfig
   )
 )
 

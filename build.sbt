@@ -73,7 +73,10 @@ lazy val reporterSettings = Seq(
 
   libraryDependencies ++= Seq(
     Dependencies.ssh,
-    Dependencies.typesafeConfig
+    Dependencies.typesafeConfig,
+    Dependencies.jcraft,
+    Dependencies.logback,
+    Dependencies.bouncyCastle
   )
 )
 

@@ -14,7 +14,7 @@ case class PerfEnvDeleteLogs(perfEnv: PerfEnv, runId: String) extends Command {
     perfEnv.machines.foreach { machine =>
       SSH(machine.hostname) { client =>
         machine.services.foreach { service =>
-          client.exec(s"rm -rf ${service.logsDir}/*")
+          service.logsDir.foreach(logs => client.exec(s"rm -rf ${logs}/*"))
         }
       }
     }

@@ -6,6 +6,9 @@ object Dependencies {
     lazy val typesafe     = "1.3.1"
     lazy val ssh          = "0.7.0"
     lazy val kafka        = "0.10.2.1"
+    lazy val jcraft       = "1.1.3"
+    lazy val logback      = "1.1.2"
+    lazy val bouncyCastle = "1.46"
     lazy val gatlingKafka = "master"
   }
 
@@ -18,4 +21,7 @@ object Dependencies {
   lazy val typesafeConfig    = "com.typesafe"           %  "config"                    % Versions.typesafe
   lazy val ssh               = "com.decodified"         %% "scala-ssh"                 % Versions.ssh
   lazy val kafka             = "org.apache.kafka"       %  "kafka-clients"             % Versions.kafka
+  lazy val jcraft            = "com.jcraft"             %  "jzlib"                     % Versions.jcraft
+  lazy val logback           = "ch.qos.logback"         %  "logback-classic"           % Versions.logback
+  lazy val bouncyCastle      = "org.bouncycastle"       %  "bcprov-jdk16"              % Versions.bouncyCastle
 }

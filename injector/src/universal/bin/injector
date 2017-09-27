@@ -3,6 +3,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 java -Dgatling.core.simulationClass=injector.Injector \
-     -Dgatling.core.directory.data=$(DIR)/../data \
-     -Dgatling.core.directory.results=$(DIR)/../results \
+     -Dgatling.core.directory.data=$DIR/../data \
+     -Dgatling.core.directory.results=$DIR/../results \
      -cp "../lib/*" io.gatling.app.Gatling

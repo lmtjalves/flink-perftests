@@ -10,12 +10,12 @@ import reporter.description.PerfEnv
  * @param runId   Performance test run identifier.
  */
 case class PerfEnvStop(perfEnv: PerfEnv, runId: String) {
-    def run(): Unit =
-      perfEnv.machines.foreach { machine =>
-        SSH(machine.hostname) { client =>
-          machine.services.foreach { service =>
-            client.exec(s"bash ${service.stopScript}")
-          }
+  def run(): Unit =
+    perfEnv.machines.foreach { machine =>
+      SSH(machine.hostname) { client =>
+        machine.services.foreach { service =>
+          client.exec(s"bash ${service.stopScript}")
         }
       }
+    }
 }

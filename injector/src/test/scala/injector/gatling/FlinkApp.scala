@@ -22,5 +22,5 @@ case class FlinkApp(hostname: String, jar: String) {
    * Stops and application.
    */
   def stop(): HttpRequestBuilder = http(jar)
-    .delete(s"${hostname}/jobs/${jar}/cancel")
+    .delete(hostname + "/jobs/${jobId}/cancel")
 }

@@ -18,11 +18,13 @@ object ReporterConfig {
    *
    * @param config Configuration that will be used to parse the [[PerfEnv]].
    * @return       The parsed [[PerfEnv]].
-   *
-   * @see [[ReporterConfig]]
    */
   implicit def readPerfEnv(config: Config): Try[PerfEnv] = Try {
-    PerfEnv(config.getConfigList("machines").asScala.map(_.read[Machine].get))
+    PerfEnv(
+      config.getConfigList("machines").asScala.map(_.read[Machine].get),
+      config.getStringList("applications").asScala,
+      config.getString("flink")
+    )
   }
 
   /**
@@ -30,8 +32,6 @@ object ReporterConfig {
    *
    * @param config Configuration that will be used to parse the [[Machine]].
    * @return       The parsed [[Machine]].
-   *
-   * @see [[ReporterConfig]]
    */
   implicit def readMachine(config: Config): Try[Machine] = Try {
     Machine(
@@ -45,8 +45,6 @@ object ReporterConfig {
    *
    * @param config Configuration that will be used to parse the [[Service]].
    * @return       The parsed [[Service]].
-   *
-   * @see [[ReporterConfig]]
    */
   implicit def readService(config: Config): Try[Service] = Try {
     Service(

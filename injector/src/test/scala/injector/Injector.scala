@@ -12,7 +12,9 @@ class Injector extends Simulation {
   val injectorConfig = ConfigFactory.load("injector.conf")
 
   injectorConfig.read[PerfTest] match {
-    case Success(perfTests) => setUp(perfTests.asGatling():_*)
+    case Success(perfTests) =>
+      setUp(perfTests.asGatling():_*)
+
     case Failure(e) => throw e
   }
 }

@@ -1,7 +1,5 @@
 package reporter.description
 
-import com.decodified.scalassh.SSH
-
 /**
  * A machine in the performance tests environment.
  *

@@ -50,7 +50,9 @@ lazy val injectorSettings = Seq(
     Dependencies.gatling,
     Dependencies.gatlingHighCharts,
     Dependencies.typesafeConfig,
-    Dependencies.kafka
+    Dependencies.kafka,
+    Dependencies.scalaj,
+    Dependencies.json4s
   )
 )
 
@@ -76,7 +78,8 @@ lazy val reporterSettings = Seq(
     Dependencies.typesafeConfig,
     Dependencies.jcraft,
     Dependencies.logback,
-    Dependencies.bouncyCastle
+    Dependencies.bouncyCastle,
+    Dependencies.scalaj
   )
 )
 

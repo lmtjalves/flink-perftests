@@ -10,6 +10,8 @@ object Dependencies {
     lazy val logback      = "1.1.2"
     lazy val bouncyCastle = "1.46"
     lazy val gatlingKafka = "master"
+    lazy val scalaj       = "2.3.0"
+    lazy val json4s       = "3.5.3"
   }
 
   object Projects {
@@ -24,4 +26,6 @@ object Dependencies {
   lazy val jcraft            = "com.jcraft"             %  "jzlib"                     % Versions.jcraft
   lazy val logback           = "ch.qos.logback"         %  "logback-classic"           % Versions.logback
   lazy val bouncyCastle      = "org.bouncycastle"       %  "bcprov-jdk16"              % Versions.bouncyCastle
+  lazy val scalaj            = "org.scalaj"             %% "scalaj-http"               % Versions.scalaj
+  lazy val json4s            = "org.json4s"             %% "json4s-native"             % Versions.json4s
 }
